@@ -39,7 +39,7 @@ exports.declareService = function (_MSRegistryUrlArray, type, host, port, pathna
 };
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
-declareServiceOnce = function (_MSRegistryUrl, type, host, port, pathname) {
+const declareServiceOnce = function (_MSRegistryUrl, type, host, port, pathname) {
     _MSRegistryUrl = _MSRegistryUrl || '';
     if (0 === _MSRegistryUrl.length) {
         return;
