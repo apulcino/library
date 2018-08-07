@@ -1,3 +1,4 @@
+"use strict"
 const os = require('os');
 const fetch = require('node-fetch');
 
@@ -33,7 +34,7 @@ exports.declareService = function (_MSRegistryUrlArray, type, host, port, pathna
         return;
     }
     _MSRegistryUrlArray.forEach((_MSRegistryUrl) => {
-        declareServiceOnce(_MSRegistryUrl, type, host, port, pathname);
+        declareServiceOnce(_MSRegistryUrl.regUrl, type, host, port, pathname);
     });
 };
 //------------------------------------------------------------------------------

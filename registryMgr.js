@@ -1,3 +1,4 @@
+"use strict"
 // ------------------------------------------------------------------------------
 // Cacher la liste des registry visible sur le réseau
 // Chaque composant possède son instance et alimente la liste à partir des messages
