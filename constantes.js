@@ -85,7 +85,7 @@ exports.getServiceList = function (MSRegistryUrl) {
 //------------------------------------------------------------------------------
 exports.getServerIpAddress = function () {
     const ifaces = os.networkInterfaces();
-    for (prop in ifaces) {
+    for (var prop in ifaces) {
         var iface = ifaces[prop];
         console.log(prop + " => " + JSON.stringify(ifaces[prop]));
         for (let i = 0; i < iface.length; i++) {
