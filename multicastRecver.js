@@ -24,7 +24,7 @@ class multicastReceiver {
 
         this.client.on('message', (message, remote) => {
             //console.log('MCast Msg: From: ' + remote.address + ':' + remote.port + ' - ' + message);
-            this.callback(remote.address, remote.port, JSON.parse('' + message));
+            this.callback(this.MCAST_ADDR, this.PORT, JSON.parse('' + message));
         });
 
         this.client.bind(this.PORT, this.HOST);
