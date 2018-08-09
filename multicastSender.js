@@ -23,9 +23,16 @@ class multicastSender {
         });
     }
     //------------------------------------------------------------------------------
+    // Envoyer un message
+    //------------------------------------------------------------------------------
+    sendOnce(_message) {
+        this.message = _message;
+        this.broadcastNew();
+    }
+    //------------------------------------------------------------------------------
     // Demarrer les diffusions
     //------------------------------------------------------------------------------
-    start(_message) {
+    sendAlways(_message) {
         this.message = _message;
         this.intervalID = setInterval(() => { this.broadcastNew() }, frequency);
     }
