@@ -106,11 +106,12 @@ exports.getServerIpAddress = function () {
 //------------------------------------------------------------------------------
 // Rechercher l'url du service qui sait répondre à cette API
 //------------------------------------------------------------------------------
+let indiceSelMService = 0;
 exports.findActiveMService = function (MServiceList, reqUrl) {
+    indiceSelMService++;
     MServiceList = MServiceList || [];
     reqUrl = reqUrl || '';
-    //var resMService = MServiceList.find(value => {
-    var resMService = MServiceList.filter(value => {
+    var myMServices = MServiceList.filter(value => {
         if (true === value.status) {
             if (-1 !== reqUrl.indexOf(value.pathname)) {
                 return value;
@@ -118,8 +119,14 @@ exports.findActiveMService = function (MServiceList, reqUrl) {
         }
         return false;
     });
-    resMService.sort((a, b) => {
-        return a.cptr - b.cptr;
-    });
-    return (resMService.length > 0) ? resMService[0] : undefined;
+    // myMServices.sort((a, b) => { return a.cptr - b.cptr; });
+    // choisir au hasard le composant
+    switch (myMServices.length) {
+        case 0:
+            return undefined;
+        case 1:
+            return myMServices[0];
+        default:
+            return myMServices[indiceSelMService % myMServices.length];
+    }
 };
