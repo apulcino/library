@@ -1,4 +1,10 @@
+// ------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------
 "use strict"
+// ------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------
+const constantes = require('./constantes');
+
 // ------------------------------------------------------------------------------
 // Cacher la liste des registry visible sur le réseau
 // Chaque composant possède son instance et alimente la liste à partir des messages
@@ -8,8 +14,22 @@ class RegistryMgr {
     //------------------------------------------------------------------------------
     // Se met à l'écoute des regiostry (udp multicast)
     //------------------------------------------------------------------------------
-    constructor(ServerIpAddress, MCastAppPort, MCastAppAddr) {
+    constructor(traceMgr) {
+        this.traceMgr = traceMgr;
         this.AFORegisteryUrl = [];
+    }
+    //------------------------------------------------------------------------------
+    //------------------------------------------------------------------------------
+    checkRegistryStatus() {
+        let AFORegisteryUrlList = this.getList();
+        AFORegisteryUrlList.forEach((reg, index) => {
+            constantes.getServiceList(this.traceMgr, reg).then(data => {
+                // ne rien faire...tout est OK
+            }).catch((AFORegisteryUrlWithError) => {
+                // Indiquer que cet annuaire n'est pas fiable...
+                this.error(AFORegisteryUrlWithError);
+            });
+        });
     }
     //------------------------------------------------------------------------------
     // Retourne une copie la liste des Registry connues
@@ -28,19 +48,17 @@ class RegistryMgr {
             // Url + Compteur
             this.AFORegisteryUrl.push({
                 regUrl: regUrl,
-                cptrTO: 10
+                cptrTO: 10,
+                contact: true
             });
         } else {
             let reg = this.AFORegisteryUrl[idx];
             reg.cptrTO = 10;
+            reg.contact = true;
         }
-        // Decrémenter tous les compteurs
-        this.AFORegisteryUrl.forEach((reg, index) => {
-            reg.cptrTO -= 1;
-        });
         // Supprimer toutes les Registry qui ne répondent plus
         this.AFORegisteryUrl = this.AFORegisteryUrl.filter((reg) => {
-            return (reg.cptrTO > 0);
+            return (reg.contact === true);
         });
     }
     //------------------------------------------------------------------------------
@@ -59,12 +77,23 @@ class RegistryMgr {
         if (-1 !== idx) {
             this.AFORegisteryUrl.splice(idx, 1);
         }
+        if (0 === this.AFORegisteryUrl.length) {
+            this.traceMgr.error('All registry contact are lost !');
+        } else {
+            this.traceMgr.error('Registry contact is lost with : ', regUrl);
+        }
+
     }
     //------------------------------------------------------------------------------
     // Supprime une registry de la liste
+    // failedRegistryUrl = {regUrl: "http://158.50.163.7:58679", cptrTO: 10, contact: true}
     //------------------------------------------------------------------------------
-    error(failedRegistryUrl) {
-        this.delete(failedRegistryUrl || '');
+    error(failedRegistry) {
+        let idx = this.findIndexRegistryByUrl(failedRegistry.regUrl);
+        if (-1 !== idx) {
+            this.AFORegisteryUrl[idx].contact = false;
+            this.delete(failedRegistry.regUrl || '');
+        }
     }
 };
 module.exports = RegistryMgr;

@@ -70,10 +70,9 @@ const declareServiceOnce = function (sourceName, _MSRegistryUrl, type, host, por
 // GET http://.../registry/list
 // [{"type":"3","url":"http://158.50.163.7:3000","pathname":"/api/user","status":true,"cptr":331}]
 //------------------------------------------------------------------------------
-exports.getServiceList = function (sourceName, MSRegistryUrl) {
-    sourceName = sourceName || '';
+exports.getServiceList = function (traceMgr, MSRegistryUrl) {
     const url = MSRegistryUrl.regUrl + '/registry/list';
-    console.log(sourceName + ' : Invoke : ', url);
+    traceMgr.debug('Invoke : ', url);
     return new Promise(function (resolve, reject) {
         fetch(url, {
             method: 'GET',
@@ -83,7 +82,7 @@ exports.getServiceList = function (sourceName, MSRegistryUrl) {
         }).then(function (json) {
             resolve(json);
         }).catch(err => {
-            console.log('declareService : Error : ', err.message);
+            traceMgr.error('getServiceList : Error : ', err.message);
             reject(MSRegistryUrl);
         });
     });
