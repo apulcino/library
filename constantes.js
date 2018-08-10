@@ -29,19 +29,18 @@ exports.MSPathnameEnum = Object.freeze({
 //------------------------------------------------------------------------------
 // http://localhost:5555/registry/declare/MSType?url=....
 //------------------------------------------------------------------------------
-exports.declareService = function (sourceName, _MSRegistryUrlArray, type, host, port, pathname) {
+exports.declareService = function (traceMgr, _MSRegistryUrlArray, type, host, port, pathname) {
     _MSRegistryUrlArray = _MSRegistryUrlArray || [];
     if (0 === _MSRegistryUrlArray.length) {
         return;
     }
     _MSRegistryUrlArray.forEach((_MSRegistryUrl) => {
-        declareServiceOnce(sourceName, _MSRegistryUrl.regUrl, type, host, port, pathname);
+        declareServiceOnce(traceMgr, _MSRegistryUrl.regUrl, type, host, port, pathname);
     });
 };
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
-const declareServiceOnce = function (sourceName, _MSRegistryUrl, type, host, port, pathname) {
-    sourceName = sourceName || '';
+const declareServiceOnce = function (traceMgr, _MSRegistryUrl, type, host, port, pathname) {
     _MSRegistryUrl = _MSRegistryUrl || '';
     if (0 === _MSRegistryUrl.length) {
         return;
@@ -52,7 +51,7 @@ const declareServiceOnce = function (sourceName, _MSRegistryUrl, type, host, por
         port: port,
         pathname: pathname
     };
-    console.log(sourceName + ' : Déclcare : ', val);
+    traceMgr.info('Declcare : ', val);
     return new Promise(function (resolve, reject) {
         fetch(url, {
             method: 'GET',
@@ -60,7 +59,7 @@ const declareServiceOnce = function (sourceName, _MSRegistryUrl, type, host, por
         }).then(response => {
             resolve(true);
         }).catch(err => {
-            console.log(sourceName + ' : declareService : Error : ', err.message);
+            traceMgr.error('declareService : Error : ', err.message);
             resolve(false);
         });
     });
