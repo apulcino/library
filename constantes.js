@@ -95,12 +95,17 @@ exports.getServerIpAddress = function () {
         var iface = ifaces[prop];
         //console.log(prop + " => " + JSON.stringify(ifaces[prop]));
         for (let i = 0; i < iface.length; i++) {
-            if (iface[i].family === "IPv4" && iface[i].internal === false) {
-                return iface[i].address;
+            if (iface[i].family !== "IPv4") {
+                continue;
+            } else if (iface[i].internal === true) {
+                continue;
+            } else if (iface[i].address.indexOf('169.254.') !== -1) {
+                continue;
             }
+            return iface[i].address;
         }
     }
-    return '';
+    return os.hostname();
 };
 //------------------------------------------------------------------------------
 // Rechercher l'url du service qui sait répondre à cette API
