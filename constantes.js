@@ -1,6 +1,7 @@
 "use strict"
 const os = require('os');
 const fetch = require('node-fetch');
+const multicastSender = require('../library/multicastSender');
 
 exports.MCastAppPort = 41848;
 exports.MCastAppAddr = "230.185.192.108";
@@ -9,7 +10,8 @@ exports.MSRegistryUrl = process.env.MS_REGISTRY_URL || 'http://localhost:5555/re
 //------------------------------------------------------------------------------
 exports.MSMessageTypeEnum = Object.freeze({
     "regAnnonce": 1,
-    "regUpdate": 2
+    "regUpdate": 2,
+    "compoDeclare": 3
 });
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
@@ -26,44 +28,56 @@ exports.MSPathnameEnum = Object.freeze({
     "afoPaniers": "/api/selections",
     "afoAuthent": "/api/user"
 });
+
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+const mcSender = new multicastSender(this.MCastAppPort, this.MCastAppAddr);
 //------------------------------------------------------------------------------
 // http://localhost:5555/registry/declare/MSType?url=....
 //------------------------------------------------------------------------------
 exports.declareService = function (traceMgr, _MSRegistryUrlArray, type, host, port, pathname) {
-    _MSRegistryUrlArray = _MSRegistryUrlArray || [];
-    if (0 === _MSRegistryUrlArray.length) {
-        return;
-    }
-    _MSRegistryUrlArray.forEach((_MSRegistryUrl) => {
-        declareServiceOnce(traceMgr, _MSRegistryUrl.regUrl, type, host, port, pathname);
-    });
-};
-//------------------------------------------------------------------------------
-//------------------------------------------------------------------------------
-const declareServiceOnce = function (traceMgr, _MSRegistryUrl, type, host, port, pathname) {
-    _MSRegistryUrl = _MSRegistryUrl || '';
-    if (0 === _MSRegistryUrl.length) {
-        return;
-    }
-    const url = _MSRegistryUrl + '/registry/declare/' + type + '?host=' + host + '&port=' + port + '&pathname=' + pathname;
-    let val = {
+    mcSender.sendAlways(JSON.stringify({
+        type: this.MSMessageTypeEnum.compoDeclare,
+        compoType: type,
         host: host,
         port: port,
         pathname: pathname
-    };
-    traceMgr.info('Declcare : ', val);
-    return new Promise(function (resolve, reject) {
-        fetch(url, {
-            method: 'GET',
-            headers: { 'Content-Type': 'application/json' },
-        }).then(response => {
-            resolve(true);
-        }).catch(err => {
-            traceMgr.error('declareService : Error : ', err.message);
-            resolve(false);
-        });
-    });
+    }), 10000);
+
+    // _MSRegistryUrlArray = _MSRegistryUrlArray || [];
+    // if (0 === _MSRegistryUrlArray.length) {
+    //     return;
+    // }
+    // _MSRegistryUrlArray.forEach((_MSRegistryUrl) => {
+    //     declareServiceOnce(traceMgr, _MSRegistryUrl.regUrl, type, host, port, pathname);
+    // });
 };
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+// const declareServiceOnce = function (traceMgr, _MSRegistryUrl, type, host, port, pathname) {
+//     _MSRegistryUrl = _MSRegistryUrl || '';
+//     if (0 === _MSRegistryUrl.length) {
+//         return;
+//     }
+//     const url = _MSRegistryUrl + '/registry/declare/' + type + '?host=' + host + '&port=' + port + '&pathname=' + pathname;
+//     let val = {
+//         host: host,
+//         port: port,
+//         pathname: pathname
+//     };
+//     traceMgr.info('Declcare : ', val);
+//     return new Promise(function (resolve, reject) {
+//         fetch(url, {
+//             method: 'GET',
+//             headers: { 'Content-Type': 'application/json' },
+//         }).then(response => {
+//             resolve(true);
+//         }).catch(err => {
+//             traceMgr.error('declareService : Error : ', err.message);
+//             resolve(false);
+//         });
+//     });
+// };
 //------------------------------------------------------------------------------
 // Demander à la Registry indiquée, la liste des services disponibles
 // GET http://.../registry/list
