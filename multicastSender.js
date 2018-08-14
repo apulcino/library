@@ -3,7 +3,6 @@
 //------------------------------------------------------------------------------
 "use strict"
 const dgram = require('dgram');
-const frequency = 10000;
 
 // ------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------
@@ -12,6 +11,7 @@ class multicastSender {
     // Multicast Server diffuseur de messages
     //------------------------------------------------------------------------------
     constructor(_PORT, _MCAST_ADDR) {
+        this.frequency = 10000;
         this.intervalID = null;
         this.PORT = _PORT;
         this.MCAST_ADDR = _MCAST_ADDR;
@@ -32,9 +32,10 @@ class multicastSender {
     //------------------------------------------------------------------------------
     // Demarrer les diffusions
     //------------------------------------------------------------------------------
-    sendAlways(_message) {
+    sendAlways(_message, _frequency) {
+        this.frequency = _frequency;
         this.message = _message;
-        this.intervalID = setInterval(() => { this.broadcastNew() }, frequency);
+        this.intervalID = setInterval(() => { this.broadcastNew() }, this.frequency);
     }
     //------------------------------------------------------------------------------
     // Arreter les diffusions
