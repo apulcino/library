@@ -54,7 +54,7 @@ class traceMgr {
     }
     debug() {
         this.date = new Date();
-        arguments[0] = colors.FgCyan + this.date.getTime() + ' : DEBUG : ' + this.name + ' : ' + arguments[0] + colors.Reset;
+        arguments[0] = colors.FgWhite + this.date.getTime() + ' : DEBUG : ' + this.name + ' : ' + arguments[0] + colors.Reset;
         console.log.apply(null, arguments);
     }
     log() {
