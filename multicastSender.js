@@ -10,7 +10,8 @@ class multicastSender {
     //------------------------------------------------------------------------------
     // Multicast Server diffuseur de messages
     //------------------------------------------------------------------------------
-    constructor(_PORT, _MCAST_ADDR) {
+    constructor(_PORT, _MCAST_ADDR, localPublicIpAddress) {
+        localPublicIpAddress = localPublicIpAddress || ['127.0.0.1'];
         this.frequency = 10000;
         this.intervalID = null;
         this.PORT = _PORT;
@@ -19,7 +20,13 @@ class multicastSender {
         this.server.bind(this.PORT, () => {
             this.server.setBroadcast(true);
             this.server.setMulticastTTL(128);
-            this.server.addMembership(this.MCAST_ADDR);
+            for (let i = 0; i < localPublicIpAddress.length; i++) {
+                try {
+                    this.server.addMembership(this.MCAST_ADDR, localPublicIpAddress[i]);
+                } catch (err) {
+                    console.error('multicastSender : Exception : ', err);
+                }
+            }
         });
     }
     //------------------------------------------------------------------------------

@@ -4,7 +4,7 @@ const fetch = require('node-fetch');
 const multicastSender = require('../library/multicastSender');
 
 exports.MCastAppPort = 41848;
-exports.MCastAppAddr = "230.185.192.108";
+exports.MCastAppAddr = "224.0.5.222";
 exports.MSRegistryUrl = process.env.MS_REGISTRY_URL || 'http://localhost:5555/registry';
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
@@ -30,8 +30,29 @@ exports.MSPathnameEnum = Object.freeze({
 });
 
 //------------------------------------------------------------------------------
+// Retrouver l'adresse IPV4 du serveur local
 //------------------------------------------------------------------------------
-const mcSender = new multicastSender(this.MCastAppPort, this.MCastAppAddr);
+exports.getServerPublicIpAddress = function () {
+    const list = [];
+    const ifaces = os.networkInterfaces();
+    for (var prop in ifaces) {
+        var iface = ifaces[prop];
+        //console.log(prop + " => " + JSON.stringify(ifaces[prop]));
+        for (let i = 0; i < iface.length; i++) {
+            if (iface[i].internal === true) {
+                continue;
+            }
+            list.push(iface[i].address);
+        }
+        if (0 === list.length) {
+            list.push(os.hostname());
+        }
+        return list;
+    }
+}
+//------------------------------------------------------------------------------
+//------------------------------------------------------------------------------
+const mcSender = new multicastSender(this.MCastAppPort, this.MCastAppAddr, this.getServerPublicIpAddress());
 //------------------------------------------------------------------------------
 // http://localhost:5555/registry/declare/MSType?url=....
 //------------------------------------------------------------------------------
@@ -121,6 +142,7 @@ exports.getServerIpAddress = function () {
     }
     return os.hostname();
 };
+
 //------------------------------------------------------------------------------
 // Rechercher l'url du service qui sait répondre à cette API
 //------------------------------------------------------------------------------

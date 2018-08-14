@@ -8,7 +8,8 @@ const dgram = require('dgram');
 //------------------------------------------------------------------------------
 class multicastReceiver {
     //Multicast Client receiving sent messages
-    constructor(_HOST, _PORT, _MCAST_ADDR, callback) {
+    constructor(_HOST, _PORT, _MCAST_ADDR, localPublicIpAddress, callback) {
+        localPublicIpAddress = localPublicIpAddress || ['127.0.0.1'];
         this.callback = callback || function () { };
         this.PORT = _PORT;
         this.MCAST_ADDR = _MCAST_ADDR; //same mcast address as Server
@@ -19,7 +20,9 @@ class multicastReceiver {
             console.log('UDP Client listening on ' + address.address + ":" + address.port);
             this.client.setBroadcast(true)
             this.client.setMulticastTTL(128);
-            this.client.addMembership(this.MCAST_ADDR);
+            for (let i = 0; i < localPublicIpAddress.length; i++) {
+                this.client.addMembership(this.MCAST_ADDR, localPublicIpAddress[i]);
+            }
         });
 
         this.client.on('message', (message, remote) => {
