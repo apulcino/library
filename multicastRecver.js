@@ -40,7 +40,8 @@ class multicastReceiver {
             this.callback(this.MCAST_ADDR, this.MCAST_PORT, JSON.parse('' + message));
         });
 
-        this.client.bind(this.MCAST_PORT, this.HOST);
+        //this.client.bind(this.MCAST_PORT, this.HOST);
+        this.client.bind(this.MCAST_PORT, '0.0.0.0');
     }
 };
 module.exports = multicastReceiver;
