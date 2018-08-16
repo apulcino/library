@@ -7,7 +7,17 @@ const dgram = require('dgram');
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
 class multicastReceiver {
-    //Multicast Client receiving sent messages
+    /**
+     * ------------------------------------------------------------------------------
+     * Multicast Client receiving sent messages
+     * @param {string} _HOST
+     * @param {string} _MCAST_PORT
+     * @param {string} _MCAST_ADDR
+     * @param {string} localPublicIpAddress
+     * @param {string} callback
+     * @public
+     * ------------------------------------------------------------------------------
+     */
     constructor(_HOST, _MCAST_PORT, _MCAST_ADDR, localPublicIpAddress, callback) {
         localPublicIpAddress = localPublicIpAddress || ['127.0.0.1'];
         this.callback = callback || function () { };

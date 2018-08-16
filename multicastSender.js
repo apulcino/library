@@ -7,14 +7,21 @@ const dgram = require('dgram');
 // ------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------
 class multicastSender {
-    //------------------------------------------------------------------------------
-    // Multicast Server diffuseur de messages
-    //------------------------------------------------------------------------------
-    constructor(_PORT, _MCAST_ADDR, localPublicIpAddress) {
+    /**
+     * ------------------------------------------------------------------------------
+     * Multicast Server diffuseur de messages
+     * @param {string} _MCAST_PORT
+     * @param {string} _MCAST_ADDR
+     * @param {string} localPublicIpAddress
+     * @param {string} callback
+     * @public
+     * ------------------------------------------------------------------------------
+    */
+    constructor(_MCAST_PORT, _MCAST_ADDR, localPublicIpAddress) {
         localPublicIpAddress = localPublicIpAddress || ['127.0.0.1'];
         this.frequency = 10000;
         this.intervalID = null;
-        this.PORT = _PORT;
+        this.MCAST_PORT = _MCAST_PORT;
         this.MCAST_ADDR = _MCAST_ADDR;
         this.server = dgram.createSocket({ type: 'udp4', reuseAddr: true });
         this.server.bind(this.PORT, () => {
@@ -60,7 +67,7 @@ class multicastSender {
     // Envoyer les messages
     //------------------------------------------------------------------------------
     broadcastNew() {
-        this.server.send(this.message, 0, this.message.length, this.PORT, this.MCAST_ADDR);
+        this.server.send(this.message, 0, this.message.length, this.MCAST_PORT, this.MCAST_ADDR);
     }
 };
 module.exports = multicastSender;
