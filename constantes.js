@@ -24,9 +24,9 @@ exports.MSTypeEnum = Object.freeze({
 //------------------------------------------------------------------------------
 exports.MSPathnameEnum = Object.freeze({
     "afoHealth": "/health",
-    "afoEvents": "/api/events",
-    "afoPaniers": "/api/selections",
-    "afoAuthent": "/api/user"
+    "afoEvents": "/api/v1/events",
+    "afoPaniers": "/api/v1/selections",
+    "afoAuthent": "/api/v1//user"
 });
 
 //------------------------------------------------------------------------------
