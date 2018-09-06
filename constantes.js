@@ -27,7 +27,7 @@ exports.MSPathnameEnum = Object.freeze({
     "afoRegistry": "/api/v1/registry",
     "afoEvents": "/api/v1/events",
     "afoPaniers": "/api/v1/selections",
-    "afoAuthent": "/api/v1//user"
+    "afoAuthent": "/api/v1/user"
 });
 
 //------------------------------------------------------------------------------
