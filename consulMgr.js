@@ -41,8 +41,8 @@ var consulMgr = {
      */
     Register: function (opts) {
         opts = opts || {};
-        this.reg.ID = opts.ID;
-        this.reg.Name = opts.ID;
+        this.reg.ID = opts.Name + "_" + opts.Port;
+        this.reg.Name = opts.Name;
         this.reg.Tags = opts.Tags;
         this.reg.Address = opts.Address;
         this.reg.Port = opts.Port;
