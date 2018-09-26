@@ -21,6 +21,13 @@
 'use strict';
 
 var consulMgr = {
+    consul: require('consul')({
+        "secure": false,
+        "host": "127.0.0.1"
+    }),
+    /**
+     * Registration template
+    */
     reg: {
         "ID": "",
         "Name": "",
@@ -48,14 +55,36 @@ var consulMgr = {
         this.reg.Port = opts.Port;
         this.reg.Check.HTTP = "http://" + opts.Address + ":" + opts.Port + "/health/status";
 
-        const consul = require('consul')({
-            "secure": false,
-            "host": "127.0.0.1"
-        });
-
-        consul.agent.service.register(this.reg, function (err) {
-            if (err)
+        this.consul.agent.service.register(this.reg, function (err) {
+            if (err) {
                 throw err;
+            }
+        });
+    },
+    /**
+     * get list of services
+     * @param {requestCallback} _callbackErr - The callback that handles the error.
+     * @param {requestCallback} _callbackOK - The callback that handles the success.
+     */
+    GetAllHealthyServices: function (_callbackErr, _callbackOK) {
+        let callbackErr = _callbackErr || function () { };
+        let callbackOK = _callbackOK || function () { };
+        this.consul.agent.service.list(function (err, result) {
+            if (err) {
+                callbackErr(err);
+            } else {
+                let services = [];
+                for (var name in result) {
+                    services.push({
+                        "address": result[name].Address,
+                        "port": result[name].Port,
+                        "name": result[name].Service,
+                        "url": "http://" + result[name].Address + ":" + result[name].Port,
+                        "id": result[name].ID
+                    });
+                }
+                callbackOK(services);
+            }
         });
     }
 }
